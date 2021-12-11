@@ -1,6 +1,6 @@
 [package]
 name = "trajgen"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Tristen Georgiou <tristen.georgiou@gmail.com>"]
 edition = "2018"
 description = "Minimum trajectory generator"

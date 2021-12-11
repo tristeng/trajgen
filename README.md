@@ -46,3 +46,7 @@ fn main() {
     let path = traj_gen.get_positions(0.25, 0.75, 0.1);
 }
 ```
+
+## Derivation
+For the derivation of the snap trajectories this library implements, please see 
+the following [Jupyter notebook](https://github.com/tristeng/control/blob/master/notebooks/trajector-generator.ipynb).

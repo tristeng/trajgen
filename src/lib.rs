@@ -48,6 +48,10 @@ fn main() {
 }
 ```
 
+## Derivation
+For the derivation of the minimum trajectories this library implements, please see
+the following [Jupyter notebook](https://github.com/tristeng/control/blob/master/notebooks/trajector-generator.ipynb).
+
  */
 
 use log::{info};
@@ -227,7 +231,7 @@ fn num_coeffs(traj_type: &TrajectoryType) -> usize {
     }
 }
 
-// Trajectory Generator
+/// Trajectory Generator
 #[derive(Debug)]
 pub struct TrajectoryGenerator {
     traj_type: TrajectoryType,
