@@ -58,13 +58,13 @@ use log::{info};
 use std::fmt;
 use std::cmp::Ordering;
 
-use nalgebra::{Matrix, Dynamic, VecStorage, U1, Vector, RowVector};
+use nalgebra::{Matrix, Dyn, VecStorage, U1, Vector, RowVector};
 use std::fmt::Formatter;
 
 // Define the dynamic matrix we use to solve
-type DMatrixf32 = Matrix<f32, Dynamic, Dynamic, VecStorage<f32, Dynamic, Dynamic>>;
-type DColVectorf32 = Vector<f32, Dynamic, VecStorage<f32, Dynamic, U1>>;
-type DRowVectorf32 = RowVector<f32, Dynamic, VecStorage<f32, U1, Dynamic>>;
+type DMatrixf32 = Matrix<f32, Dyn, Dyn, VecStorage<f32, Dyn, Dyn>>;
+type DColVectorf32 = Vector<f32, Dyn, VecStorage<f32, Dyn, U1>>;
+type DRowVectorf32 = RowVector<f32, Dyn, VecStorage<f32, U1, Dyn>>;
 
 /// a point in 3D space-time
 #[derive(Debug, Copy, Clone)]
@@ -241,7 +241,6 @@ pub struct TrajectoryGenerator {
     points: Vec<Point>,
 }
 
-
 impl TrajectoryGenerator {
     pub fn new(traj_type: TrajectoryType) -> TrajectoryGenerator {
         TrajectoryGenerator {
@@ -344,7 +343,7 @@ impl TrajectoryGenerator {
 
         // fill in equations for first segment - time derivatives of position are all equal to 0 at start time
         let coeffs = self.coeffs_at_time(Vec::from(&eqs[1..1+numeqs]), points[0].t);
-        let mut m = a.slice_mut((rowidx, 0), (numeqs, numcoeffs));
+        let mut m = a.view_mut ((rowidx, 0), (numeqs, numcoeffs));
         for (idx, row) in coeffs.row_iter().enumerate() {
             let rowvec = DRowVectorf32::from(row);
             m.set_row(idx, &rowvec);
@@ -353,7 +352,7 @@ impl TrajectoryGenerator {
 
         // fill in equations for last segment - time derivatives of position are all equal to 0 at end time
         let coeffs = self.coeffs_at_time(Vec::from(&eqs[1..1+numeqs]), points.last().unwrap().t);
-        let mut m = a.slice_mut((rowidx, n - numcoeffs), (numeqs, numcoeffs));
+        let mut m = a.view_mut ((rowidx, n - numcoeffs), (numeqs, numcoeffs));
         for (idx, row) in coeffs.row_iter().enumerate() {
             let rowvec = DRowVectorf32::from(row);
             m.set_row(idx, &rowvec);
@@ -372,7 +371,7 @@ impl TrajectoryGenerator {
             let col = idx * numcoeffs;
             let coeffs = self.coeffs_at_time(Vec::from(&eqs[0..1]), startt);
             let rowvec = DRowVectorf32::from(coeffs.row(0));
-            a.slice_mut((rowidx, col), (1, numcoeffs)).set_row(0, &rowvec);
+            a.view_mut ((rowidx, col), (1, numcoeffs)).set_row(0, &rowvec);
 
             // set the b vector values
             bx[rowidx] = startp.x;
@@ -384,7 +383,7 @@ impl TrajectoryGenerator {
             // end point
             let coeffs = self.coeffs_at_time(Vec::from(&eqs[0..1]), endt);
             let rowvec = DRowVectorf32::from(coeffs.row(0));
-            a.slice_mut((rowidx, col), (1, numcoeffs)).set_row(0, &rowvec);
+            a.view_mut ((rowidx, col), (1, numcoeffs)).set_row(0, &rowvec);
 
             // set the b vector values
             bx[rowidx] = endp.x;
@@ -399,7 +398,7 @@ impl TrajectoryGenerator {
             let endt = points[idx+1].t;
             let mut col = idx * numcoeffs;
             let mut coeffs = self.coeffs_at_time(Vec::from(&eqs[1..numcoeffs-1]), endt);
-            let mut m = a.slice_mut((rowidx, col), (numcoeffs-2, numcoeffs));
+            let mut m = a.view_mut ((rowidx, col), (numcoeffs-2, numcoeffs));
 
             // fill in required equations for time derivatives to ensure they are the same through
             // the transition point
@@ -411,7 +410,7 @@ impl TrajectoryGenerator {
 
             // negate endt coefficients since we move everything to the lhs
             coeffs.neg_mut();
-            let mut m = a.slice_mut((rowidx, col), (numcoeffs-2, numcoeffs));
+            let mut m = a.view_mut ((rowidx, col), (numcoeffs-2, numcoeffs));
             for (ii, row) in coeffs.row_iter().enumerate() {
                 let rowvec = DRowVectorf32::from(row);
                 m.set_row(ii, &rowvec);

@@ -1,8 +1,8 @@
 [package]
 name = "trajgen"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Tristen Georgiou <tristen.georgiou@gmail.com>"]
-edition = "2018"
+edition = "2021"
 description = "Minimum trajectory generator"
 readme = "README.md"
 repository = "https://github.com/tristeng/trajgen/"
@@ -11,7 +11,7 @@ keywords = ["trajectory", "planning"]
 
 [dependencies]
 log = "0.4"
-nalgebra = "0.29"
+nalgebra = "0.33.0"
 
 [dev-dependencies]
 assert = "0.7.4"
